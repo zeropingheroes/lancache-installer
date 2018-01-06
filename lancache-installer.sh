@@ -91,3 +91,30 @@ cd /tmp/lancache-installer/nginx-1.12.2 && ./configure \
 
 cd /tmp/lancache-installer/nginx-1.12.2 && make -j 8
 cd /tmp/lancache-installer/nginx-1.12.2 && make install
+
+# Remove default nginx config files
+rm -rf /etc/nginx
+
+# Create directories for cache
+mkdir -p /etc/nginx
+mkdir -p /var/lancache/cache/installers
+mkdir -p /var/lancache/cache/tmp
+mkdir -p /var/lancache/logs/
+
+# Set correct permissions for directories
+chown -R www-data:www-data /var/lancache
+
+# Get the lancache nginx configuration files
+/usr/bin/git clone https://github.com/zeropingheroes/lancache.git /etc/nginx/
+
+# Install nginx servce
+cp $SCRIPT_DIR/configs/systemd/nginx.service /lib/systemd/system/nginx.service
+
+# Load the new service file
+/bin/systemctl daemon-reload
+
+# Set the nginx service to start at boot
+/bin/systemctl enable nginx
+
+# Start the nginx service
+/bin/systemctl start nginx
