@@ -18,6 +18,12 @@ if [ -f $SCRIPT_DIR/.env ]; then
     source $SCRIPT_DIR/.env
 fi
 
+# Check all required variables are set
+: "${CPU_THREADS:?must be set}"
+: "${CACHE_DATA_DIRECTORY:?must be set}"
+: "${CACHE_LOGS_DIRECTORY:?must be set}"
+: "${CACHE_TEMP_DIRECTORY:?must be set}"
+
 # Install required packages
 /usr/bin/apt update -y
 /usr/bin/apt install -y ioping \
@@ -43,12 +49,12 @@ mkdir -p /tmp/lancache-installer/
 for archive in /tmp/lancache-installer/*.tar.gz; do tar xvzf $archive -C /tmp/lancache-installer/; done
 
 # Compile LuaJIT
-cd /tmp/lancache-installer/LuaJIT-2.0.5 && make -j 8 PREFIX="/tmp/lancache-installer/LuaJIT-2.0.5/compiled"
+cd /tmp/lancache-installer/LuaJIT-2.0.5 && make -j $CPU_THREADS PREFIX="/tmp/lancache-installer/LuaJIT-2.0.5/compiled"
 cd /tmp/lancache-installer/LuaJIT-2.0.5 && make install PREFIX="/tmp/lancache-installer/LuaJIT-2.0.5/compiled"
 
 # Compile PCRE
 cd /tmp/lancache-installer/pcre-8.41 && ./configure
-cd /tmp/lancache-installer/pcre-8.41 && make -j 8
+cd /tmp/lancache-installer/pcre-8.41 && make -j $CPU_THREADS
 cd /tmp/lancache-installer/pcre-8.41 && make install
 
 # Tell nginx's build system where LuaJIT is
@@ -89,7 +95,7 @@ cd /tmp/lancache-installer/nginx-1.12.2 && ./configure \
         --without-http_upstream_keepalive_module \
         --without-http_upstream_zone_module
 
-cd /tmp/lancache-installer/nginx-1.12.2 && make -j 8
+cd /tmp/lancache-installer/nginx-1.12.2 && make -j $CPU_THREADS
 cd /tmp/lancache-installer/nginx-1.12.2 && make install
 
 # Remove default nginx config files
@@ -97,12 +103,12 @@ rm -rf /etc/nginx
 
 # Create directories for cache
 mkdir -p /etc/nginx
-mkdir -p /var/lancache/cache/installers
-mkdir -p /var/lancache/cache/tmp
-mkdir -p /var/lancache/logs/
+mkdir -p $CACHE_DATA_DIRECTORY
+mkdir -p $CACHE_LOGS_DIRECTORY
+mkdir -p $CACHE_TEMP_DIRECTORY
 
 # Set correct permissions for directories
-chown -R www-data:www-data /var/lancache
+chown -R www-data:www-data $CACHE_DATA_DIRECTORY $CACHE_LOGS_DIRECTORY $CACHE_TEMP_DIRECTORY
 
 # Get the lancache nginx configuration files
 /usr/bin/git clone https://github.com/zeropingheroes/lancache.git /etc/nginx/
