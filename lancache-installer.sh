@@ -23,6 +23,7 @@ fi
 : "${CACHE_DATA_DIRECTORY:?must be set}"
 : "${CACHE_LOGS_DIRECTORY:?must be set}"
 : "${CACHE_TEMP_DIRECTORY:?must be set}"
+: "${CACHE_MAX_SIZE_GB:?must be set}"
 
 # Install required packages
 /usr/bin/apt update -y
@@ -113,7 +114,10 @@ chown -R www-data:www-data $CACHE_DATA_DIRECTORY $CACHE_LOGS_DIRECTORY $CACHE_TE
 # Get the lancache nginx configuration files
 /usr/bin/git clone https://github.com/zeropingheroes/lancache.git /etc/nginx/
 
-# Install nginx servce
+# Prepare nginx configuration files
+/etc/nginx/prepare-configs.sh
+
+# Install nginx service
 cp $SCRIPT_DIR/configs/systemd/nginx.service /lib/systemd/system/nginx.service
 
 # Load the new service file
