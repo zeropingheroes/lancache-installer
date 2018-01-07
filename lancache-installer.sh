@@ -150,3 +150,14 @@ rm -rf /var/git/lancache-sniproxy
 
 # Install sniproxy
 cd /var/git/lancache-sniproxy/ && ./install.sh
+
+# If a logstash host is specified, install filebeat
+if [ -n "$LOGSTASH_HOST" ]; then
+
+    # Get lancache-filebeat
+    rm -rf /var/git/lancache-filebeat
+    /usr/bin/git clone https://github.com/zeropingheroes/lancache-filebeat.git /var/git/lancache-filebeat
+
+    # Run the install script
+    /var/git/lancache-filebeat/install.sh
+fi
