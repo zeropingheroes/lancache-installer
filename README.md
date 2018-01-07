@@ -14,8 +14,8 @@ Install Lancache using a single script
 
 All configuration is done via environment variables:
 
-1. Copy `.env.example` to `.env`
-2. Edit `.env` and add the desired values for your installation
+1. `cp .env.example .env`
+2. `nano .env`
 
 Alternatively set the environment variables manually by running:
 
