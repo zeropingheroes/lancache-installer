@@ -1,6 +1,10 @@
 # Lancache Installer
 
-Install Lancache using a single script
+Install a lancache using a single script, which will set up and configure:
+
+- nginx
+- [Luameter](https://luameter.com/demo) (if provided)
+- sniproxy
 
 ## Requirements
 
