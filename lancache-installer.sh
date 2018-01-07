@@ -143,3 +143,10 @@ cp $SCRIPT_DIR/configs/systemd/nginx.service /lib/systemd/system/nginx.service
 
 # Start the nginx service
 /bin/systemctl start nginx
+
+# Get sniproxy for passing HTTPS requests through to origin
+rm -rf /var/git/lancache-sniproxy
+/usr/bin/git clone https://github.com/zeropingheroes/lancache-sniproxy.git /var/git/lancache-sniproxy
+
+# Install sniproxy
+cd /var/git/lancache-sniproxy/ && ./install.sh
