@@ -117,6 +117,21 @@ chown -R www-data:www-data $CACHE_DATA_DIRECTORY $CACHE_LOGS_DIRECTORY $CACHE_TE
 # Prepare nginx configuration files
 /etc/nginx/prepare-configs.sh
 
+# If a URL to download Luameter is provided
+if [ -n "$LUAMETER_URL" ]; then
+    export LUAMETER_DIRECTORY="/opt/luameter"
+    rm -r "$LUAMETER_DIRECTORY"
+    mkdir -p "$LUAMETER_DIRECTORY"
+
+    # Download and uncompress Luameter
+    /usr/bin/curl -o "$LUAMETER_DIRECTORY/luameter.tar.gz" "$LUAMETER_URL"
+    tar xvzf "$LUAMETER_DIRECTORY/luameter.tar.gz" -C "$LUAMETER_DIRECTORY" --strip-components=1
+    rm "$LUAMETER_DIRECTORY/luameter.tar.gz"
+
+    # Install the Luameter nginx config file (in a slightly inappropriate place...)
+    /usr/bin/envsubst '$LUAMETER_DIRECTORY' < "$SCRIPT_DIR/configs/luameter/luameter.conf.templ" > "/etc/nginx/caches-enabled/luameter.conf"
+fi
+
 # Install nginx service
 cp $SCRIPT_DIR/configs/systemd/nginx.service /lib/systemd/system/nginx.service
 
