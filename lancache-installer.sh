@@ -50,8 +50,8 @@ mkdir -p /tmp/lancache-installer/
 for archive in /tmp/lancache-installer/*.tar.gz; do tar xvzf $archive -C /tmp/lancache-installer/; done
 
 # Compile LuaJIT
-cd /tmp/lancache-installer/LuaJIT-2.0.5 && make -j $CPU_THREADS PREFIX="/tmp/lancache-installer/LuaJIT-2.0.5/compiled"
-cd /tmp/lancache-installer/LuaJIT-2.0.5 && make install PREFIX="/tmp/lancache-installer/LuaJIT-2.0.5/compiled"
+cd /tmp/lancache-installer/LuaJIT-2.0.5 && make -j $CPU_THREADS PREFIX="/usr/local"
+cd /tmp/lancache-installer/LuaJIT-2.0.5 && make install PREFIX="/usr/local"
 
 # Compile PCRE
 cd /tmp/lancache-installer/pcre-8.41 && ./configure
@@ -59,8 +59,8 @@ cd /tmp/lancache-installer/pcre-8.41 && make -j $CPU_THREADS
 cd /tmp/lancache-installer/pcre-8.41 && make install
 
 # Tell nginx's build system where LuaJIT is
-export LUAJIT_LIB=/tmp/lancache-installer/LuaJIT-2.0.5/compiled/lib
-export LUAJIT_INC=/tmp/lancache-installer/LuaJIT-2.0.5/compiled/include/luajit-2.0
+export LUAJIT_LIB=/usr/local/lib
+export LUAJIT_INC=/usr/local/include/luajit-2.0
 
 # Compile nginx
 cd /tmp/lancache-installer/nginx-1.12.2 && ./configure \
@@ -120,13 +120,13 @@ chown -R www-data:www-data $CACHE_DATA_DIRECTORY $CACHE_LOGS_DIRECTORY $CACHE_TE
 # If a URL to download Luameter is provided
 if [ -n "$LUAMETER_URL" ]; then
     export LUAMETER_DIRECTORY="/opt/luameter"
-    rm -r "$LUAMETER_DIRECTORY"
+    rm -rf "$LUAMETER_DIRECTORY"
     mkdir -p "$LUAMETER_DIRECTORY"
 
     # Download and uncompress Luameter
     /usr/bin/curl -o "$LUAMETER_DIRECTORY/luameter.tar.gz" "$LUAMETER_URL"
     tar xvzf "$LUAMETER_DIRECTORY/luameter.tar.gz" -C "$LUAMETER_DIRECTORY" --strip-components=1
-    rm "$LUAMETER_DIRECTORY/luameter.tar.gz"
+    rm -rf "$LUAMETER_DIRECTORY/luameter.tar.gz"
 
     # Install the Luameter nginx config file (in a slightly inappropriate place...)
     /usr/bin/envsubst '$LUAMETER_DIRECTORY' < "$SCRIPT_DIR/configs/luameter/luameter.conf.templ" > "/etc/nginx/caches-enabled/luameter.conf"
