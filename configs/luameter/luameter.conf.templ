@@ -1,7 +1,7 @@
 lua_shared_dict luameter 1m;
 lua_package_path "${LUAMETER_DIRECTORY}/luajit/?.luac";
 init_by_lua "luameter = require 'luameter'";
-log_by_lua "luameter.mark_by_host(); luameter.mark(ngx.var.remote_addr)";
+log_by_lua "luameter.mark(ngx.var.remote_addr); luameter.mark(ngx.var.server_name)";
 
 server {
     listen 8001;
