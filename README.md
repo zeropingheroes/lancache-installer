@@ -1,14 +1,10 @@
 # Lancache Installer
 
-Install a lancache using a single script, which will set up and configure:
-
-- nginx
-- [Luameter](https://luameter.com/demo) (if provided)
-- sniproxy
+Compile Nginx and install zeropingheroes/lancache configs.
 
 ## Requirements
 
-- Ubuntu Server 16.04
+- Ubuntu Server 24.04
 
 ## Installation
 
@@ -20,10 +16,6 @@ All configuration is done via environment variables:
 
 1. `cp .env.example .env`
 2. `nano .env`
-
-Alternatively set the environment variables manually by running:
-
-`export VARIABLE=value`
 
 ## Usage
 
